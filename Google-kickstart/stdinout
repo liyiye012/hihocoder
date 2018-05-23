@@ -1,0 +1,40 @@
+    //freopen("A-small-attempt0.in", "r", stdin);
+    //freopen("A-small-attempt0.out", "w", stdout);
+    vector<string> fileinput() {
+    string path = "";
+    path += "C:\\Users\\yiye\\Downloads\\";
+    string  filename = "";
+    filename += "A-small-practice.in";
+    string filepath = path + filename;
+    ifstream f;
+    f.open(filepath, ios::in);
+    vector<string> res;
+
+    //char c[20];
+    //f.getline(c, 20);
+    string s;
+    f >> T;
+    for (int i = 0; i < T; i++) {
+        f >> s;
+        
+        cout << s << endl;
+        res.push_back(s);
+    }
+    return res;
+    f.close();
+}
+void fileout(vector<string> res) {
+    string path = "";
+    path += "C:\\Users\\yiye\\Downloads\\";
+    string  filename = "";
+    filename += "Output.txt";
+    string filepath = path + filename;
+    ofstream f(filepath);
+    if (!f) return;
+    int y = 0;
+    for (int i = 0; i <T; i++) {
+        y = G(res[i]);
+        f << "Case #" << i+1 << ": " << y;
+    }
+    f.close();
+}
