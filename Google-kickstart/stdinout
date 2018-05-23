@@ -1,5 +1,8 @@
-    //freopen("A-small-attempt0.in", "r", stdin);
+#include<cstdio>
+//freopen("A-small-attempt0.in", "r", stdin);
     //freopen("A-small-attempt0.out", "w", stdout);
+    //fclose(stdin);//关闭文件 
+    //fclose(stdout);//关闭文件 
     vector<string> fileinput() {
     string path = "";
     path += "C:\\Users\\yiye\\Downloads\\";
