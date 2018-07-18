@@ -1,0 +1,170 @@
+#pragma comment(linker, "/STACK:1024000000,1024000000")
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <set>
+#include <list>
+#include <map>
+#include <string>
+#include <cstring>
+#include <stack>
+#include <queue>
+#include <cmath>
+#include <ctime>
+#include <bitset>
+#include <utility>
+#include <complex>
+#include <assert.h>
+#include <limits.h>
+#include <iomanip>
+//#include <unordered_map>
+//#include <bits/stdc++.h>
+using namespace std;
+#define rank rankk
+#define mp make_pair
+#define pb push_back
+#define xo(a,b) ((b)&1?(a):0)
+#define tm tmp
+
+//#define LL ll
+typedef unsigned long long ull;
+typedef pair<int,int> pii;
+typedef long long ll;
+typedef pair<ll,int> pli;
+typedef pair<int,ll>pil;
+typedef pair<ll,ll> pll;
+//const double INF=1e20;
+const int INF=0x3f3f3f3f;
+//const int INF= 0x7fffffff;
+//const ll INF=0x3f3f3f3f3f3f3f3fll;
+const ll INFF=0x3f3f3f3f3f3f3f3fll;
+//const ll INFF=1e14+5;
+const int MAX=1e5+10;
+const int M=1e6+15;
+//const int M=2500007;
+//const ll MAXN=2e8;
+//const int MAX_N=MAX;
+const int MOD=1e9+7;
+//const ull MOD=1e7+7;
+//const ll MOD=998244353;
+//const long double pi=acos(-1.0);
+//#define double long double
+//#define ls T[k].l
+//#define rs T[k].r
+const double eps=1e-6;
+ll gcd(ll a,ll b){return b?gcd(b,a%b):a;}
+template<typename T>inline T abs(T a) {return a>0?a:-a;}
+//#define double long double
+template<class T> inline
+void read(T& num) {
+    bool start=false,neg=false;
+    char c;
+    num=0;
+    while((c=getchar())!=EOF) {
+        if(c=='-') start=neg=true;
+        else if(c>='0' && c<='9') {
+            start=true;
+            num=num*10+c-'0';
+        } else if(start) break;
+    }
+    if(neg) num=-num;
+}
+inline ll powMM(ll a,ll b,ll M){
+    ll ret=1;
+    a%=M;
+//    b%=M;
+    while (b){
+        if (b&1) ret=ret*a%M;
+        b>>=1;
+        a=a*a%M;
+    }
+    return ret;
+}
+//const long double eps=-1.0;
+//clock_t t1 = clock();
+//fprintf(stderr, "%ld ms\n", clock() - t1);
+void open()
+{
+    freopen("input.txt","r",stdin);
+    freopen("output.txt","w",stdout);
+}
+//#define debug
+int t,n,m;
+int l,r;
+ll a[MAX],b[MAX];
+ll solve()
+{
+    ll sum=0,re=0,tem;
+//    for(int i=1;i<=n;i++)sum+=a[i];
+    bool neg=(b[1]<=0);
+    ll pos1,pos2,neg1,neg2;
+    pos1=pos2=1;
+    if(neg)neg1=neg2=b[1];
+    else neg1=neg2=0;
+    for(int i=1;i<=m;i++)
+    {
+        if(b[i]>0)
+        {
+            pos1=max(pos1,b[i]);pos2=min(pos2,b[i]);
+        }
+        else if(b[i]<0)
+        {
+            neg1=max(neg1,b[i]);neg2=min(neg2,b[i]);
+        }
+    }
+    int lo=0;ll g=-INFF;
+    for(int i=1;i<=n;i++)
+    {
+        ll da=max(pos1*a[i],pos2*a[i]);
+        if(neg)
+        {
+            da=max(da,neg1*a[i]);
+            da=max(da,neg2*a[i]);
+        }
+        if(da>g)
+        {
+            g=da;lo=i;
+        }
+    }
+    re=-INFF;
+//    sum-=a[lo];
+    a[lo]=0;
+//    re=sum;
+//    printf("re=%lld\n",re);
+    for(int i=1;i<=n;i++)
+    {
+        if(i==lo)continue;
+        re=max(re,a[i]*pos1);
+        re=max(re,a[i]*pos2);
+        if(neg)
+        {
+            re=max(re,a[i]*neg1);
+            re=max(re,a[i]*neg2);
+        }
+    }
+    return re;
+}
+int main()
+{
+    scanf("%d",&t);
+    for(int C=1;C<=t;C++)
+    {
+        read(n);read(m);
+        l=1;r=n;
+        for(int i=1;i<=n;i++)read(a[i]);sort(a+1,a+1+n);
+        for(int i=1;i<=m;i++)read(b[i]);sort(b+1,b+1+m);
+
+        printf("Case #%d: %lld\n",C,solve());
+    }
+    return 0;
+}
+/*
+5 10 4
+1 2 1
+2 3 3
+3 4 3
+4 5 7
+0 1
+0 5
+*/
