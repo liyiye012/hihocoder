@@ -1,0 +1,166 @@
+#include <iostream>
+#include<unordered_map>
+#include<cstdio>
+#include<queue>
+#include<vector>
+#include<cmath>
+#include<algorithm>
+#include<stack>
+#include<set>
+using namespace std;
+
+/*
+Supervin loves to eat candies. Today, his favorite candy shop is offering N candies, which are arranged in a line. The i-th candy in the line (counting starting from 1) has a sweetness level Si. Note that the sweetness level of a candy might be negative, which means the candy tastes bitter.
+
+Supervin likes to eat sweet candies. However, candies with a combined sweetness level of more than D would be too much sweetness even for him. Supervin also realises that a candy with an odd sweetness level is "odd", and he does not want to eat more than O odd candies. In other words, an odd candy is a candy with a sweetness level that is not evenly divisible by 2. Additionally, since Supervin is in a rush, he can only eat a single contiguous subset of candies.
+
+Therefore, he wants to eat a contiguous non-empty subset of candies in which there are at most O odd candies and the total sweetness level is maximized, but not more than D. Help Supervin to determine the maximum total sweetness level he can get, or return IMPOSSIBLE if there is no contiguous subset satisfying these constraints.
+*/
+void output(vector<int> Arr) {
+    for (int i = 0; i < Arr.size(); i++) {
+        cout << Arr[i] << " ";
+    }
+    cout << endl;
+}
+void Xini(vector<int> &X, int X1, int X2, int A, int B, int C, int M,int N) {
+    X[1] = X1;
+    X[2] = X2;
+    for (int i = 3; i <= N; i++) {
+        X[i] = (A*X[i - 1] + B*X[i - 2] + C) % M;
+    } 
+}
+void Sini(vector<int> X, vector<int> &S, int N, int L) {
+    for (int i = 1; i <= N; i++) {
+        S[i] = X[i] + L;
+    }
+}
+inline bool isodd(int num) {
+    return num & 0x1 == 1;
+}
+long long findmaxsum(vector<int> S, int N,int O,int D) {// ignore maxsum>D
+    long long cursum = 0;
+    long long maxsum = -9223372036854775807;
+    int oddnum = 0;
+    queue<int> q;
+    for (int i = 1; i <= N; i++) {
+
+        if (isodd(S[i])) oddnum++;
+        if (cursum <= 0 || oddnum > O ) { 
+        cursum = S[i]; 
+        oddnum = isodd(S[i]) ? 1 : 0;
+        while (!q.empty()) q.pop();
+        cout << "clear at index="<<i << endl; }
+
+        else { 
+        cursum += S[i]; 
+        q.push(S[i]);
+        }
+        
+        if ((cursum > maxsum) && (cursum <=D)) {
+            cout << "update maxsum" << endl;
+            maxsum = cursum;
+        }
+  /*      else if ((cursum > maxsum) && (cursum > D)) {
+            while (cursum > D) {
+                cursum -= q.front();
+                if (isodd(q.front())) oddnum--;
+                q.pop();
+            }
+            if (cursum > maxsum) maxsum = cursum;
+        }*/
+        cout << "S[" << i << "]=" << S[i] << "   cursum=" << cursum << "   oddnum=" << oddnum << "   maxsum=" << maxsum << endl;
+    }
+    return maxsum;
+}
+
+
+const int MAXN = 500005;
+
+int X[MAXN];
+int S[MAXN];
+long long sum[MAXN];
+
+void erase_one(std::multiset<long long> &s, long long x) {
+    auto it = s.find(x);
+    auto it1 = it;
+    it1++;
+    s.erase(it, it1);//左闭右开，删除的是it指向的元素
+}
+
+void solve() {
+    int N, O;
+    long long D;
+    scanf("%d%d%lld", &N, &O, &D);
+    int X1, X2, A, B, C, M, L;
+    scanf("%d%d%d%d%d%d%d", &X1, &X2, &A, &B, &C, &M, &L);
+    X[1] = X1, X[2] = X2;
+    for (int i = 3; i <= N; i++) {
+        X[i] = (1LL * A * X[i - 1] + 1LL * B * X[i - 2] + C) % M;
+    }
+    for (int i = 1; i <= N; i++) {
+        S[i] = X[i] + L;
+        sum[i] = sum[i - 1] + S[i];//sum是以i为终点的子数组之和
+    }
+    int cnt_odd = 0;//奇数的计数器
+    int l = 1;
+    std::multiset<long long> s;//可容纳重复元素
+    long long ans = -0x3f3f3f3f3f3f3f3fLL;//long long 的最小值,ans为全局最大值
+    for (int i = 1; i <= N; i++) {
+        s.insert(sum[i - 1]);
+        cnt_odd += S[i] & 1;
+        while (cnt_odd > O) {
+            erase_one(s, sum[l - 1]);//删除sum[l-1]
+            cnt_odd -= S[l] & 1;
+            l++;
+        }
+        auto it = s.lower_bound(sum[i] - D);//在first和last中的前闭后开区间进行二分查找，返回大于或等于val的第一个元素位置。如果所有元素都小于val，则返回last的位置
+        if (it != s.end()) {//s中存在比sum[i]-D大的元素
+            ans = std::max(ans, sum[i] - *it);
+        }
+    }
+    if (ans == -0x3f3f3f3f3f3f3f3fLL) {
+        printf("IMPOSSIBLE\n");
+    }
+    else {
+        printf("%lld\n", ans);
+    }
+}
+
+int main() {
+    freopen("C:\\Users\\yiye\\Downloads\\A-small-attempt0.in", "r", stdin);
+    freopen("C:\\Users\\yiye\\Downloads\\out.txt", "w", stdout);
+    //cout << "OK";
+    //TO DO=========================
+ //   int T;
+ //   long long N, O, D, X1, X2, A, B, C, M, L;
+ //    long long sum = 0;
+ //   cin >> T;
+ //   for (int i = 1; i <= T; i++) {
+ //       
+ //       cin >> N >> O >> D;
+ //       cout <<"N="<< N<<"  O=" << O <<"  D="<< D << endl;
+ //       cin >> X1 >> X2 >> A >> B >> C >> M >> L;
+
+ //      // cout << X1 << X2 << A << B << C << M  <<L<< endl;
+ //       vector<int> X(N + 1, 0);//starting from 1
+ //       vector<int> S(N + 1, 0);
+ //       Xini(X, X1, X2, A, B, C, M, N);
+ //       Sini(X, S, N, L);
+ ///*       output(X);*/
+ //       output(S);
+ //       sum = findmaxsum(S, N, O,D);
+ //       cout << "*****************************************SUM=" << sum << endl;
+
+ //   }
+    int T;
+    scanf("%d", &T);
+    for (int i = 1; i <= T; i++) {
+        printf("Case #%d: ", i);
+        solve();
+
+
+    //===========================
+    //fclose(stdin);//关闭文件 
+    //fclose(stdout);//关闭文件 
+    return 0;
+}
