@@ -1,0 +1,72 @@
+#include <map>
+#include <cmath>
+#include <ctime>
+#include <string>
+#include <cstdio>
+#include <vector>
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <set>
+using namespace std;
+const long long MAXLL = 1LL<<62;
+int n, m, S, a[311][311];
+long long s[311][311];
+long long ans;
+void work(){
+    cin>>n>>m>>S;
+    for(int i=1;i<=n;i++){
+        for(int j=1;j<=m;j++){
+            cin>>a[i][j];
+            s[i][j]=s[i][j-1]+a[i][j];
+        }
+    }
+    
+    ans=-MAXLL;
+    for (int i = 1; i <= m; ++i) {
+        for (int j = i; j <= m; ++j) {
+            int L = S / (j-i+1) + (S%(j-i+1) != 0);
+            long long mn = MAXLL, sum = 0, sum1 = 0;
+            for (int k = 1; k <= n; ++k) {
+                if (k >= L) {
+                    sum1 += s[k-L][j] - s[k-L][i-1];
+                    mn = min(mn, sum1);
+                }
+                sum += s[k][j] - s[k][i-1];
+                if (mn != MAXLL) {
+                    ans = max(ans, sum - mn);
+                }
+            }
+        }
+    }
+    cout<<ans<<endl;
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE//如果没有出现#define ONLINE_JUDGE字段则执行下列语句 与#ifndef相反的是#ifdef
+    freopen("input.txt", "r", stdin);
+    int t = clock();
+#endif
+    int TestCase = 1;
+    // scanf("%d", &TestCase);
+    while (TestCase --) {
+        work();
+    }
+#ifndef ONLINE_JUDGE
+    cerr << "time = " <<  clock() - t << " ms" << endl;
+#endif
+    return 0;
+}
+
+/*
+Problem >_{
+    给n和k，求长度为n，每报k个数就踢掉的约瑟夫环最后剩下的是谁
+}_<
+
+Solution >_{
+    考虑$f(n, k)$表示答案，第一次报数之后，$k-1$被踢掉，剩下了$n-1$个人，从$k$开始报数，那么剩下的人的答案是$(f(n-1, k)+k) % n$，可以得到$f(n, k)=(f(1, k)+(n-1)k) % n$
+}_<
+*/
