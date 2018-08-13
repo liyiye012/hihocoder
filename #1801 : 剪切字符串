@@ -1,0 +1,67 @@
+//字符串可以看作是对应元素间形成的一个置换群，连续子串的剪切操作即乘上另一个置换。
+//奇数长度对应的置换可以改变原置换逆序对数的奇偶性，而偶数长度对应的置换维持原有奇偶性不变。
+//故当N=K时，答案为1，N=K+1时，答案为原串生成的循环串数量，答案为N，
+//N>K+1时，K为奇数时答案为N!，偶数时答案为N!/2。
+#include <map>
+#include <cmath>
+#include <ctime>
+#include <string>
+#include <cstdio>
+#include <vector>
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <set>
+using namespace std;
+
+int n, k;
+long long P;
+
+void work() {
+    scanf("%d%d%lld", &n, &k, &P);
+    if (n == k) {
+        printf("1\n");
+    } else if (n - 1 == k) {
+        printf("%d\n", n%P);
+    } else {
+        long long ans = 1;
+        for (int i = 3; i <= n; ++i) {
+            ans *= i;
+            ans %= P;
+        }
+        if (k & 1) {
+            printf("%lld\n", (ans<<1)%P);
+        } else {
+            printf("%lld\n", ans);
+        }
+    }
+}
+
+int main()
+{
+#ifndef ONLINE_JUDGE
+    freopen("input.txt", "r", stdin);
+    int t = clock();
+#endif
+    int TestCase = 1;
+    // scanf("%d", &TestCase);
+    while (TestCase --) {
+        work();
+    }
+#ifndef ONLINE_JUDGE
+    cerr << "time = " <<  clock() - t << " ms" << endl;
+#endif
+    return 0;
+}
+
+/*
+Problem >_{
+    给n和k，求长度为n，每报k个数就踢掉的约瑟夫环最后剩下的是谁
+}_<
+
+Solution >_{
+    考虑$f(n, k)$表示答案，第一次报数之后，$k-1$被踢掉，剩下了$n-1$个人，从$k$开始报数，那么剩下的人的答案是$(f(n-1, k)+k) % n$，可以得到$f(n, k)=(f(1, k)+(n-1)k) % n$
+}_<
+*/
